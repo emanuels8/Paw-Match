@@ -11,9 +11,9 @@ const baseQuery = fetchBaseQuery({
 
 export const baseQueryWithReauth = async (args, api, extraOptions) => {
   let response = null;
-  console.log(env.API_URL);
-  response = await baseQuery(args, api, extraOptions);
 
+  response = await baseQuery(args, api, extraOptions);
+  console.log(response);
   if (response?.error?.originalStatus === 401) {
     if (!mutex.isLocked()) {
       // Token has expired resign in user
