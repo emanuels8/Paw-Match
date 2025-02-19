@@ -1,0 +1,42 @@
+{
+  "name": "fetch-frontend-takehome",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.5.1",
+    "antd": "^5.22.7",
+    "async-mutex": "^0.5.0",
+    "axios": "^1.7.9",
+    "bootstrap": "^5.3.3",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router": "^7.1.1",
+    "redux": "^5.0.1",
+    "styled-components": "^6.1.13"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "esbuild": "^0.24.2",
+    "eslint": "^9.17.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.3",
+    "globals": "^15.14.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.19.1",
+    "vite": "^4.4.9",
+    "vite-plugin-eslint": "^1.8.1"
+  }
+}
