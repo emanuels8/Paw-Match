@@ -25,7 +25,6 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
     if (dogSearchResults?.resultIds?.length && !isSearchFetching) {
       postDogs(dogSearchResults.resultIds);
     }
-    console.log(dogSearchResults);
   }, [dogSearchResults, postDogs]);
 
   useEffect(() => {

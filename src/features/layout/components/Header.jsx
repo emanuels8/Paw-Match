@@ -32,7 +32,6 @@ export const Header = () => {
         signOut();
         break;
       default:
-        console.log("Unknown key:", e.key);
     }
   };
 
