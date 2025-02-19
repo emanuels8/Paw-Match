@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { usePostDogsMutation } from "../api/dogsApi";
+import { usePostDogsMutation } from "../api/dogs/dogsApi";
 import { Link, useLocation } from "react-router";
 import { FaArrowLeft, FaDog } from "react-icons/fa";
 import { Card, Image, Divider } from "antd";
 import { CustomText } from "../../../styles/components/CustomText/CustomText";
+import { useLocationsMutation } from "../api/location/locationApi";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 export const ViewFavoriteDog = () => {
   const location = useLocation();
@@ -11,7 +14,11 @@ export const ViewFavoriteDog = () => {
   const searchParams = location?.state?.searchParams;
 
   const [postDogs, { data: postDogData, isSuccess }] = usePostDogsMutation();
+  const [locations, { data: locationData, isSuccess: locationIsSuccess }] =
+    useLocationsMutation();
+
   const [favoriteDog, setFavoriteDog] = useState(null);
+  const [favoriteDogLocation, setFavoriteDogLocation] = useState(null);
 
   useEffect(() => {
     if (dogMatch?.match) {
@@ -21,12 +28,23 @@ export const ViewFavoriteDog = () => {
 
   useEffect(() => {
     if (isSuccess && postDogData?.length) {
-      setFavoriteDog(postDogData[0]);
+      const selectedDog = postDogData[0];
+      setFavoriteDog(selectedDog);
+
+      if (selectedDog?.zip_code) {
+        locations([selectedDog.zip_code]);
+      }
     }
-  }, [isSuccess, postDogData]);
+  }, [isSuccess, postDogData, locations]);
+
+  useEffect(() => {
+    if (locationIsSuccess && locationData?.length) {
+      setFavoriteDogLocation(locationData[0]);
+    }
+  }, [locationIsSuccess, locationData]);
 
   return (
-    <div className="w-100 py-4" style={{ margin: "0 auto" }}>
+    <div className="w-100 py-4">
       <div className="mb-4 w-100">
         <Link
           to="/dogs"
@@ -42,79 +60,118 @@ export const ViewFavoriteDog = () => {
           <FaArrowLeft style={{ marginRight: "8px" }} /> Back to Search
         </Link>
       </div>
+      {locationIsSuccess && (
+        <Card
+          className="shadow-lg text-center"
+          style={{
+            padding: "20px",
+            borderRadius: "12px",
+            backgroundColor: "#F9F9F9",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <div className="text-center">
+            <div className="d-flex flex-column flex-md-row justify-content-center align-items-center">
+              <CustomText fontSize="2.5rem" fontWeight="700" color="#5A49A3">
+                Your Paw Match!
+              </CustomText>
+              <CustomText
+                fontSize="2.5rem"
+                fontWeight="700"
+                color="#5A49A3"
+                className="ms-2"
+              >
+                {favoriteDog?.name}
+              </CustomText>
+              <FaDog fontSize="2.5rem" color="#5A49A3" className="ms-2" />
+            </div>
+            <Divider />
 
-      <Card
-        className="shadow-lg w-100 text-center"
-        style={{ padding: "0px", borderRadius: "12px" }}
-      >
-        <div>
-          <div className="d-flex flex-column flex-md-row justify-content-center align-items-center w-100">
-            <CustomText
-              className="me-4"
-              fontSize="3rem"
-              fontWeight="600"
-              color="#5A49A3"
-            >
-              Your Paw Match!
+            <CustomText fontSize="1.4rem" fontWeight="500">
+              Learn More about {favoriteDog?.name} below!
             </CustomText>
-
-            <CustomText
-              className="me-2"
-              fontSize="3rem"
-              fontWeight="600"
-              color="#5A49A3"
-            >
-              {favoriteDog?.name}
-            </CustomText>
-            <FaDog fontSize="3rem" color="#5A49A3" />
           </div>
-          <Divider />
-
-          <CustomText fontSize="1.5rem" fontWeight="400">
-            Learn More about {favoriteDog?.name} below!
-          </CustomText>
-        </div>
-
-        <div>
-          <div>
+          <div className="mt-3">
             <Image
               src={favoriteDog?.img}
               alt={favoriteDog?.name}
               className="rounded"
               style={{
                 width: "100%",
-                maxHeight: "500px",
+                maxHeight: "400px",
                 objectFit: "cover",
-                borderRadius: "8px",
+                borderRadius: "10px",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
               }}
             />
           </div>
-
           <Divider />
-          <div className="mt-4">
-            <CustomText className="me-2" fontSize="1.5rem" fontWeight="500">
-              Breed:
-            </CustomText>
-            <CustomText fontSize="1.5rem" fontWeight="400">
-              {favoriteDog?.breed}
-            </CustomText>
-            <Divider />
-            <CustomText className="me-2" fontSize="1.5rem" fontWeight="500">
-              Age:
-            </CustomText>
-            <CustomText fontSize="1.5rem" fontWeight="400">
-              {favoriteDog?.age}
-            </CustomText>
-            <Divider />
-            <CustomText className="me-2" fontSize="1.5rem" fontWeight="500">
-              Zip Code:
-            </CustomText>
-            <CustomText fontSize="1.5rem" fontWeight="400">
-              {favoriteDog?.zip_code}
-            </CustomText>
+          <div className="mt-4 text-left">
+            {[
+              { label: "Breed", value: favoriteDog?.breed },
+              { label: "Age", value: favoriteDog?.age },
+              { label: "Zip Code", value: favoriteDog?.zip_code },
+              { label: "City", value: favoriteDogLocation?.city },
+              { label: "County", value: favoriteDogLocation?.county },
+              { label: "State", value: favoriteDogLocation?.state },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="d-flex justify-content-between align-items-center py-2"
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "500",
+                  borderBottom: index < 5 ? "1px solid #E0E0E0" : "none",
+                }}
+              >
+                <CustomText fontWeight="600" style={{ color: "#5A49A3" }}>
+                  {item.label}:
+                </CustomText>
+                <CustomText fontWeight="500">{item.value}</CustomText>
+              </div>
+            ))}
           </div>
-        </div>
-      </Card>
+
+          {favoriteDogLocation?.latitude && favoriteDogLocation?.longitude && (
+            <div className="mt-4">
+              <CustomText fontSize="1.5rem" fontWeight="600" color="#5A49A3">
+                Location on Map
+              </CustomText>
+              <MapContainer
+                center={[
+                  favoriteDogLocation.latitude,
+                  favoriteDogLocation.longitude,
+                ]}
+                zoom={10}
+                style={{
+                  height: "300px",
+                  width: "100%",
+                  borderRadius: "8px",
+                  marginTop: "10px",
+                }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                {favoriteDogLocation?.latitude &&
+                  favoriteDogLocation?.longitude && (
+                    <Marker
+                      position={[
+                        favoriteDogLocation.latitude,
+                        favoriteDogLocation.longitude,
+                      ]}
+                    >
+                      <Popup>
+                        <b>{favoriteDog?.name}</b> is here! 🐶
+                      </Popup>
+                    </Marker>
+                  )}
+              </MapContainer>
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 };

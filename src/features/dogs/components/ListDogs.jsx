@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { Card, Image, Pagination, Spin } from "antd";
+import { Card, Image, notification, Pagination, Spin } from "antd";
 import {
   useDogsMatchMutation,
   usePostDogsMutation,
   useSearchDogsQuery,
-} from "../api/dogsApi";
+} from "../api/dogs/dogsApi";
 import { useNavigate } from "react-router";
 import { CustomButton } from "../../../styles/components/Button/CustomButton";
 
 import dogNotFound from "../../../assets/dogs/dogNotFound.png";
 import { FaArrowUp, FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
+import { CustomText } from "../../../styles/components/CustomText/CustomText";
 
 export const ListDogs = ({ searchParams, setSearchParams }) => {
   const [currentDogs, setCurrentDogs] = useState([]);
@@ -22,8 +23,11 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
   const [isAscending, setIsAscending] = useState(true);
 
   useEffect(() => {
-    if (dogSearchResults?.resultIds?.length && !isSearchFetching) {
+    if (dogSearchResults?.resultIds?.length > 0 && !isSearchFetching) {
       postDogs(dogSearchResults.resultIds);
+    } else if (dogSearchResults?.resultIds?.length === 0) {
+      setSearchParams(null);
+      notification.warning({ message: "No dogs with this criteria!" });
     }
   }, [dogSearchResults, postDogs]);
 
@@ -73,15 +77,17 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
   };
 
   const findDogMatch = () => {
-    if (favoriteDogs?.length > 0) {
-      dogsMatch(favoriteDogs);
-    }
+    dogsMatch(favoriteDogs);
   };
 
   return (
     <div className="container">
       <div className="d-flex justify-content-between align-items-center my-3">
-        <h5 className="mb-0">Dog Listings</h5>
+        <div>
+          <CustomText fontWeight={"700"} fontSize={"24px"} className="mb-0">
+            Paw Matches
+          </CustomText>
+        </div>
         <div className="d-flex">
           <CustomButton type="primary" onClick={sortListAscDesc}>
             {isAscending ? <FaSortAlphaDown /> : <FaSortAlphaUp />} Sort by
@@ -119,18 +125,32 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
                     ]}
                   >
                     <Card.Meta
-                      title={dog?.name}
+                      title={
+                        <CustomText fontWeight={"700"}>{dog?.name}</CustomText>
+                      }
                       description={
                         <>
-                          <p>
-                            <strong>Breed:</strong> {dog?.breed}
-                          </p>
-                          <p>
-                            <strong>Age:</strong> {dog?.age}
-                          </p>
-                          <p>
-                            <strong>Zip Code:</strong> {dog?.zip_code}
-                          </p>
+                          <div className="mb-2">
+                            <CustomText>
+                              <CustomText fontWeight={"600"}>Breed:</CustomText>{" "}
+                              {dog?.breed}
+                            </CustomText>
+                          </div>
+
+                          <div className="mb-2">
+                            <CustomText>
+                              <CustomText fontWeight={"600"}>Age:</CustomText>{" "}
+                              {dog?.age}
+                            </CustomText>
+                          </div>
+                          <div className="mb-2">
+                            <CustomText>
+                              <CustomText fontWeight={"600"}>
+                                Zip Code:
+                              </CustomText>{" "}
+                              {dog?.zip_code}
+                            </CustomText>
+                          </div>
                         </>
                       }
                     />
@@ -182,7 +202,11 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
       </div>
       <div className="d-flex flex-row justify-content-between w-100">
         <div className="d-flex justify-content-center w-75 mb-4 me-4">
-          <CustomButton type="primary" onClick={findDogMatch}>
+          <CustomButton
+            disabled={favoriteDogs?.length <= 0}
+            type="primary"
+            onClick={findDogMatch}
+          >
             Find Dog Match
           </CustomButton>
         </div>

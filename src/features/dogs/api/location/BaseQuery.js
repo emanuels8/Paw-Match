@@ -1,11 +1,11 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { Mutex } from "async-mutex";
-import { env } from "../../../config/env";
+import { env } from "../../../../config/env";
 
 const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${env.API_URL}/dogs`,
+  baseUrl: `${env.API_URL}/locations`,
   credentials: "include",
 });
 
@@ -13,7 +13,7 @@ export const baseQueryWithReauth = async (args, api, extraOptions) => {
   let response = null;
 
   response = await baseQuery(args, api, extraOptions);
-  console.log(response);
+
   if (response?.error?.originalStatus === 401) {
     if (!mutex.isLocked()) {
       // Token has expired resign in user

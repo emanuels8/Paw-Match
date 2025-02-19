@@ -1,6 +1,6 @@
 import { Form } from "antd";
 import { useState, useEffect } from "react";
-import { useGetDogsQuery } from "../api/dogsApi";
+import { useGetDogsQuery } from "../api/dogs/dogsApi";
 import { CustomText } from "../../../styles/components/CustomText/CustomText";
 import { CustomButton } from "../../../styles/components/Button/CustomButton";
 import { CustomSelect } from "../../../styles/components/Select/CustomSelects";
@@ -79,6 +79,23 @@ export const DogSearch = ({ searchParams, setSearchParams }) => {
           </CustomText>
         }
         style={{ fontSize: "1rem", fontWeight: "500" }}
+        rules={[
+          {
+            validator: (_, zipCodes) => {
+              const isValidZip = (zip) => /^\d{5}$/.test(zip); // US ZIP validation (5-digit)
+              const invalidZips =
+                zipCodes?.filter((zip) => !isValidZip(zip)) || [];
+
+              return invalidZips.length
+                ? Promise.reject(
+                    `Invalid ZIP codes: ${invalidZips.join(
+                      ", "
+                    )}. Please enter valid 5-digit ZIP codes.`
+                  )
+                : Promise.resolve();
+            },
+          },
+        ]}
       >
         <CustomSelect
           mode="tags"
@@ -86,8 +103,21 @@ export const DogSearch = ({ searchParams, setSearchParams }) => {
           placeholder="Enter Zip Codes"
           optionFilterProp="label"
           style={{ fontSize: "1rem" }}
+          onBlur={(e) => {
+            //removes invalid zipcodes once user clicks away
+            const currentValues = e.target.value
+              .split(",")
+              .map((zip) => zip.trim());
+            const isValidZip = (zip) => /^\d{5}$/.test(zip);
+            const validZips = currentValues.filter(isValidZip);
+
+            if (validZips.length !== currentValues.length) {
+              form.setFieldsValue({ zipCodes: validZips });
+            }
+          }}
         />
       </Form.Item>
+
       <Form.Item
         label={
           <CustomText fontWeight={500} fontSize={"1rem"}>

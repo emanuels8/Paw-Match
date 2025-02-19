@@ -44,7 +44,7 @@ export const DogsLayout = () => {
         </div>
 
         <div className="col-lg-8 col-md-7 col-sm-12">
-          <div className="card p-3 shadow-sm">
+          <div className="d-flex w-100 card p-3 shadow-sm">
             <ListDogs
               searchParams={searchParams}
               setSearchParams={setSearchParams}
