@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../api/BaseQuery";
+import { baseQueryWithReauth } from "./BaseQuery";
 
 export const dogsApi = createApi({
   reducerPath: "dogsApi",
@@ -27,16 +27,20 @@ export const dogsApi = createApi({
         sort = "breed:asc",
       }) => {
         const queryParams = new URLSearchParams();
-
+        const isValidZip = (zip) => /^\d{5}$/.test(zip);
         if (breeds?.length)
           breeds.forEach((breed) => queryParams.append("breeds", breed));
-        if (zipCodes?.length)
-          zipCodes.forEach((zip) => queryParams.append("zipCodes", zip));
+        if (zipCodes?.length) {
+          zipCodes
+            .filter(isValidZip)
+            .forEach((zip) => queryParams.append("zipCodes", zip));
+        }
         if (ageMin) queryParams.set("ageMin", ageMin);
         if (ageMax) queryParams.set("ageMax", ageMax);
         if (size) queryParams.set("size", size >= 100 ? 100 : size);
         if (from) queryParams.set("from", from);
         if (sort) queryParams.set("sort", sort);
+
         return {
           url: `/search?${queryParams.toString()}`,
           method: "GET",
