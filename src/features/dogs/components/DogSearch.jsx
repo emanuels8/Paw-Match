@@ -79,42 +79,18 @@ export const DogSearch = ({ searchParams, setSearchParams }) => {
           </CustomText>
         }
         style={{ fontSize: "1rem", fontWeight: "500" }}
-        rules={[
-          {
-            validator: (_, zipCodes) => {
-              const isValidZip = (zip) => /^\d{5}$/.test(zip); // US ZIP validation (5-digit)
-              const invalidZips =
-                zipCodes?.filter((zip) => !isValidZip(zip)) || [];
-
-              return invalidZips.length
-                ? Promise.reject(
-                    `Invalid ZIP codes: ${invalidZips.join(
-                      ", "
-                    )}. Please enter valid 5-digit ZIP codes.`
-                  )
-                : Promise.resolve();
-            },
-          },
-        ]}
       >
         <CustomSelect
+          onChange={(newZipCodes) => {
+            const isValidZip = (zip) => /^\d{5}$/.test(zip);
+            const validZips = newZipCodes.filter(isValidZip);
+            form.setFieldsValue({ zipCodes: validZips });
+          }}
           mode="tags"
           showSearch
           placeholder="Enter Zip Codes"
           optionFilterProp="label"
           style={{ fontSize: "1rem" }}
-          onBlur={(e) => {
-            //removes invalid zipcodes once user clicks away
-            const currentValues = e.target.value
-              .split(",")
-              .map((zip) => zip.trim());
-            const isValidZip = (zip) => /^\d{5}$/.test(zip);
-            const validZips = currentValues.filter(isValidZip);
-
-            if (validZips.length !== currentValues.length) {
-              form.setFieldsValue({ zipCodes: validZips });
-            }
-          }}
         />
       </Form.Item>
 
