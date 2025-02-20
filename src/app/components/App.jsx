@@ -4,6 +4,7 @@ import { PrivateRoute } from "../routes/PrivateRoute";
 import { Suspense, useEffect, useState } from "react";
 import routes from "../routes/routes";
 import { useAuth } from "../routes/AuthProvider";
+import "leaflet/dist/leaflet.css";
 
 const App = () => {
   const { user } = useAuth();

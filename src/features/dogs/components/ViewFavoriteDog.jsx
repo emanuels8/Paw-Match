@@ -163,7 +163,28 @@ export const ViewFavoriteDog = () => {
                       ]}
                     >
                       <Popup>
-                        <b>{favoriteDog?.name}</b> is here! 🐶
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <CustomText fontSize={"1.25rem"} fontWeight={"600"}>
+                            {favoriteDog?.name} is here!{" "}
+                          </CustomText>
+                          <div className="mb-2">
+                            <FaDog
+                              fontSize="1.5rem"
+                              color="rgba(90, 73, 163)"
+                              style={{
+                                marginLeft: "8px",
+                                position: "relative",
+                                top: "2px",
+                              }}
+                            />
+                          </div>
+                        </div>
                       </Popup>
                     </Marker>
                   )}
