@@ -26,7 +26,15 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
     if (dogSearchResults?.resultIds?.length > 0 && !isSearchFetching) {
       postDogs(dogSearchResults.resultIds);
     } else if (dogSearchResults?.resultIds?.length === 0) {
-      setSearchParams(null);
+      setSearchParams({
+        breeds: [],
+        zipCodes: [],
+        ageMin: "",
+        ageMax: "",
+        size: 10,
+        from: 0,
+        sort: "breed:asc",
+      });
       notification.warning({ message: "No dogs with this criteria!" });
     }
   }, [dogSearchResults, postDogs]);

@@ -1,8 +1,33 @@
-# React + Vite
+# Paw Match - README
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#### Paw Match is a dog listing web app that helps users search for their favorite canine companions.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##### To install dependencies, run:
+
+```sh
+npm install
+```
+
+## Running Tests
+
+##### To execute tests, run:
+
+```sh
+npm test
+```
+
+## Development
+
+##### Note: `.env` files are not in `.gitignore` to simplify the development process.
+
+##### To start the development server, use:
+
+```sh
+npm run dev
+```
+
+## Live Link to website
+
+<https://main.d2akigr26yghar.amplifyapp.com/>
