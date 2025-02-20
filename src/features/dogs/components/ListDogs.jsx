@@ -5,17 +5,19 @@ import {
   usePostDogsMutation,
   useSearchDogsQuery,
 } from "../api/dogs/dogsApi";
-import { useNavigate } from "react-router";
 import { CustomButton } from "../../../styles/components/Button/CustomButton";
 
 import dogNotFound from "../../../assets/dogs/dogNotFound.png";
 import { FaArrowUp, FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { CustomText } from "../../../styles/components/CustomText/CustomText";
 
-export const ListDogs = ({ searchParams, setSearchParams }) => {
+export const ListDogs = ({
+  setShowFavoriteDog,
+  searchParams,
+  setSearchParams,
+}) => {
   const [currentDogs, setCurrentDogs] = useState([]);
   const [favoriteDogs, setFavoriteDogs] = useState([]);
-  const navigate = useNavigate();
   const { data: dogSearchResults, isFetching: isSearchFetching } =
     useSearchDogsQuery(searchParams, { skip: !searchParams });
   const [postDogs, { data: postDogData }] = usePostDogsMutation();
@@ -47,9 +49,7 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
 
   useEffect(() => {
     if (dogsMatchData) {
-      navigate(`/dogs/favorites`, {
-        state: { favoriteDog: dogsMatchData, searchParams: searchParams },
-      });
+      setShowFavoriteDog(dogsMatchData);
     }
   }, [dogsMatchData]);
 

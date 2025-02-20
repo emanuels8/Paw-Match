@@ -8,10 +8,9 @@ import { useLocationsMutation } from "../api/location/locationApi";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-export const ViewFavoriteDog = () => {
-  const location = useLocation();
-  const dogMatch = location?.state?.favoriteDog;
-  const searchParams = location?.state?.searchParams;
+export const ViewFavoriteDog = ({ showFavoriteDog, setShowFavoriteDog }) => {
+  const dogMatch = showFavoriteDog;
+
   const [postDogs, { data: postDogData, isSuccess, error: postDogError }] =
     usePostDogsMutation();
   const [
@@ -54,7 +53,9 @@ export const ViewFavoriteDog = () => {
       <div className="mb-4 w-100">
         <Link
           to="/dogs"
-          state={{ searchParams }}
+          onClick={() => {
+            setShowFavoriteDog(null);
+          }}
           style={{
             display: "flex",
             alignItems: "center",
