@@ -5,7 +5,7 @@ import { Login } from "./auth/Login";
 const routes = {
   privateRoutes: [
     {
-      path: "/dogs/favorites/:dogId",
+      path: "/dogs/favorites",
       element: ViewFavoriteDog,
       featureName: "Tickets",
     },

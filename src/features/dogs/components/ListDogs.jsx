@@ -47,7 +47,7 @@ export const ListDogs = ({ searchParams, setSearchParams }) => {
 
   useEffect(() => {
     if (dogsMatchData) {
-      navigate(`/dogs/favorites/${dogsMatchData?.match}`, {
+      navigate(`/dogs/favorites`, {
         state: { favoriteDog: dogsMatchData, searchParams: searchParams },
       });
     }
