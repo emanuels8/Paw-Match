@@ -5,6 +5,7 @@
 ## Installation
 
 ##### To install dependencies, run:
+##### Node version 22
 
 ```sh
 npm install
