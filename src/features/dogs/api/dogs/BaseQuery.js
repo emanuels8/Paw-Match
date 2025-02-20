@@ -42,6 +42,8 @@ export const baseQueryWithReauth = async (args, api, extraOptions) => {
       await mutex.waitForUnlock();
       response = await baseQuery(args, api, extraOptions);
     }
+  } else if (response?.error?.originalStatus === 404) {
+    window.location.href = "/";
   }
   return response;
 };
