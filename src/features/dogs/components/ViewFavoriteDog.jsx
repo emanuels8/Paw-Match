@@ -12,17 +12,21 @@ export const ViewFavoriteDog = () => {
   const location = useLocation();
   const dogMatch = location?.state?.favoriteDog;
   const searchParams = location?.state?.searchParams;
-
-  const [postDogs, { data: postDogData, isSuccess }] = usePostDogsMutation();
-  const [locations, { data: locationData, isSuccess: locationIsSuccess }] =
-    useLocationsMutation();
+  const [postDogs, { data: postDogData, isSuccess, error: postDogError }] =
+    usePostDogsMutation();
+  const [
+    locations,
+    { data: locationData, isSuccess: locationIsSuccess, error: locationError },
+  ] = useLocationsMutation();
 
   const [favoriteDog, setFavoriteDog] = useState(null);
   const [favoriteDogLocation, setFavoriteDogLocation] = useState(null);
 
   useEffect(() => {
     if (dogMatch?.match) {
-      postDogs([dogMatch.match]);
+      postDogs([dogMatch.match]).catch((error) => {
+        console.error("Error posting dog data:", error);
+      });
     }
   }, [dogMatch?.match, postDogs]);
 
@@ -32,7 +36,9 @@ export const ViewFavoriteDog = () => {
       setFavoriteDog(selectedDog);
 
       if (selectedDog?.zip_code) {
-        locations([selectedDog.zip_code]);
+        locations([selectedDog.zip_code]).catch((error) => {
+          console.error("Error fetching location data:", error);
+        });
       }
     }
   }, [isSuccess, postDogData, locations]);
@@ -60,6 +66,16 @@ export const ViewFavoriteDog = () => {
           <FaArrowLeft style={{ marginRight: "8px" }} /> Back to Search
         </Link>
       </div>
+      {postDogError && (
+        <div className="alert alert-danger">
+          Error loading dog data. Please try again.
+        </div>
+      )}
+      {locationError && (
+        <div className="alert alert-danger">
+          Error loading location data. Please try again.
+        </div>
+      )}
       {locationIsSuccess && (
         <Card
           className="shadow-lg text-center"
@@ -152,42 +168,39 @@ export const ViewFavoriteDog = () => {
               >
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  attribution="&copy; OpenStreetMap contributors"
                 />
-                {favoriteDogLocation?.latitude &&
-                  favoriteDogLocation?.longitude && (
-                    <Marker
-                      position={[
-                        favoriteDogLocation.latitude,
-                        favoriteDogLocation.longitude,
-                      ]}
+                <Marker
+                  position={[
+                    favoriteDogLocation.latitude,
+                    favoriteDogLocation.longitude,
+                  ]}
+                >
+                  <Popup>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      <Popup>
-                        <div
+                      <CustomText fontSize={"1.25rem"} fontWeight={"600"}>
+                        {favoriteDog?.name} is here!
+                      </CustomText>
+                      <div className="mb-2">
+                        <FaDog
+                          fontSize="1.5rem"
+                          color="rgba(90, 73, 163)"
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            marginLeft: "8px",
+                            position: "relative",
+                            top: "2px",
                           }}
-                        >
-                          <CustomText fontSize={"1.25rem"} fontWeight={"600"}>
-                            {favoriteDog?.name} is here!{" "}
-                          </CustomText>
-                          <div className="mb-2">
-                            <FaDog
-                              fontSize="1.5rem"
-                              color="rgba(90, 73, 163)"
-                              style={{
-                                marginLeft: "8px",
-                                position: "relative",
-                                top: "2px",
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  )}
+                        />
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
               </MapContainer>
             </div>
           )}
