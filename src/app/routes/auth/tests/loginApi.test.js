@@ -12,7 +12,7 @@ beforeAll(async () => {
         withCredentials: true,
       }
     );
-    console.log("Status", response.status);
+
     if (response.status !== 200) {
       throw new Error("Login failed before running tests");
     }
