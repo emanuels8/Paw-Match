@@ -7,6 +7,7 @@ const routes = {
     {
       path: "/dogs/favorites/:dogId",
       element: ViewFavoriteDog,
+      featureName: "Tickets",
     },
     {
       path: "*",
